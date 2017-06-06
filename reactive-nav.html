@@ -1,0 +1,166 @@
+<!-- Load the Polymer.Element base class -->
+<link rel="import" href="bower_components/polymer/polymer-element.html">
+
+
+<dom-module id="reactive-nav">
+  <template>
+
+    <!-- Component Styles -->
+    <style>
+
+      /* Host Component Styles */
+      :host {
+        display: block;
+        background-color: #E0E0E0;
+      }
+
+      /* Menu */
+      button {
+        cursor: pointer;
+        font-size: 1.25rem;
+        color: #FFF;
+        padding: 15px 75px;
+        margin: 0;
+        border: none;
+      }
+      button:focus { /* remove that annoying blue outline */
+        outline: none;
+      }
+
+      #section-1-button {
+        background-color: #F44336;
+      }
+      #section-2-button {
+        background-color: #3F51B5;
+      }
+      #section-3-button {
+        background-color: #009688;
+      }
+
+      /* Sections Slots */
+      .content > ::slotted(:not([selected])) {
+        display: none;
+      }
+
+    </style>
+
+    <!-- Shadow DOM Starts Here -->
+    <div class="menu" on-click="handleClick">
+      <button type="button" id="section-1-button">[[section1]]</button>
+      <button type="button" id="section-2-button">[[section2]]</button>
+      <button type="button" id="section-3-button">[[section3]]</button>
+    </div>
+    <div class="content">
+      <slot id="sections"></slot>
+    </div>
+
+  </template>
+  <script>
+
+    class ReactiveNav extends Polymer.Element {
+
+      // return component name
+      static get is() { return 'reactive-nav' }
+
+      // set property and observer
+      static get properties() {
+        return {
+          selected: {
+            type: Object,
+            observer: '_selectedChange' // gets new & old selected as params
+          },
+          defaultText: {
+            type: Object,
+            value: {
+              section1: 'Section 1',
+              section2: 'Section 2',
+              section3: 'Section 3'
+            }
+          },
+          section1: {
+            type: String,
+            value: 'Section 1'
+          },
+          section2: {
+            type: String,
+            value: 'Section 2'
+          },
+          section3: {
+            type: String,
+            value: 'Section 3'
+          }
+        }
+      }
+
+      // Runs when the component is inserted into the DOM
+      connectedCallback() {
+
+        super.connectedCallback();
+
+        this._resetSelected(); // reset selection when this component is inserted
+      }
+
+      _setDefaultText(sectionid) {
+        console.log(sectionId);
+      }
+
+      // If we find ourself with nothing selected, or with something incorrect
+      // selected, reset back to selecting tab 1
+      _resetSelected() {
+        if (!this.selected || this.selected.parentElement !== this) {
+          this.selected = this.children['section-1'];
+        }
+      }
+
+      _parseId(element) { // takes a string
+        return parseInt(element.replace(/[^\d]+/,''));
+      }
+
+      // Observer: selected
+      _selectedChange(selected, oldSelected) {
+
+        let id, oldId;
+
+        if (oldSelected) { // remove selected attr from previously selected section
+          oldSelected.removeAttribute('selected')
+          oldId = this._parseId(oldSelected.id);
+        };
+
+        if (selected) { // set the new selected section
+          selected.setAttribute('selected', '');
+          id = this._parseId(selected.id);
+
+          // update the nav text
+
+          for (let i = 1; i < 4; i++) { // cycle from 1 to correspond with section id's
+            if (i === id) { // for the new active section
+              let additional = ' (You are here)'
+              this[`section${i}`] = this.defaultText[`section${i}`] + additional;
+
+            } else if (oldId && i === oldId) { // for the old active section
+              let additional = 'Back to ';
+              this[`section${i}`] = additional + this.defaultText[`section${i}`];
+
+            } else { // for all other sections, revert to default text
+              this[`section${i}`] = this.defaultText[`section${i}`];
+            }
+          }
+        }
+      }
+
+      // Event handler for all button clicks
+      handleClick(e) {
+
+        let target = e.target.id; // determine target
+        let id = this._parseId(target); // pull off id number
+        let selection = this.children[`section-${id}`]; // find section with matching id
+
+        this.selected = selection; // update selected property
+      }
+
+    }
+
+    customElements.define(ReactiveNav.is, ReactiveNav);
+
+  </script>
+</dom-module>

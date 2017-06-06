@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Meta -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+  <title>Polymer 2 Demo Project</title>
+
+  <!-- Web Components Polyfill -->
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+  <!-- Web Component Imports -->
+  <link rel="import" href="reactive-nav.html">
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+
+  <!-- Polymer Nav Component -->
+  <!-- Wraps major components/sections, shows whichever is selected and hides the rest -->
+  <reactive-nav>
+
+    <!-- Sections -->
+    <section id="section-1">
+      <div class="textbox">
+        <h1>Hey, welcome to section 1.</h1>
+      </div>
+    </section>
+
+    <section id="section-2">
+      <div class="textbox">
+        <h1>Hey, welcome to section 2.</h1>
+      </div>
+    </section>
+
+    <section id="section-3">
+      <div class="textbox">
+        <h1>Hey, welcome to section 3.</h1>
+      </div>
+    </section>
+
+  </reactive-nav>
+
+  <script>
+  </script>
+</body>
+</html>
